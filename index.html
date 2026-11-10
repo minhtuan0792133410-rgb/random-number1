@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình Tạo Số Ngẫu Nhiên</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            /* Nền gradient xanh dương sâu kết hợp họa tiết lưới chấm hiện đại */
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(26, 115, 232, 0.35) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.25) 0px, transparent 50%),
+                radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 24px 24px;
+            color: #202124;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            padding: 18px 24px;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header span.badge {
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .main-content {
+            padding: 24px;
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .result-area {
+            flex: 1;
+            text-align: center;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 24px 10px;
+            border: 1px solid #cbd5e1;
+        }
+        .result-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .result-number {
+            font-size: 76px;
+            font-weight: 800;
+            color: #1a73e8;
+            line-height: 1;
+            user-select: none;
+        }
+        .controls-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .input-group label {
+            font-size: 12px;
+            color: #475569;
+            font-weight: 600;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            background-color: #f8fafc;
+            outline: none;
+        }
+        .footer-action {
+            padding: 18px 24px;
+            background: #ffffff;
+        }
+        button#spinBtn {
+            width: 100%;
+            background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+        button#spinBtn:hover {
+            box-shadow: 0 6px 16px rgba(26, 115, 232, 0.45);
+            transform: translateY(-1px);
+        }
+        button#spinBtn:active {
+            transform: translateY(0);
+        }
+        button#spinBtn:disabled {
+            background: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .history-section {
+            padding: 14px 24px;
+            background-color: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            font-size: 13px;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-list {
+            font-weight: 700;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <span>Trình Tạo Số Ngẫu Nhiên</span>
+        <span class="badge">TRNG v2.4</span>
+    </div>
+
+    <div class="main-content">
+        <div class="result-area">
+            <div class="result-label">Kết quả</div>
+            <div class="result-number" id="display">-</div>
+        </div>
+
+        <div class="controls-area">
+            <div class="input-group">
+                <label>Số nhỏ nhất (Min)</label>
+                <input type="number" value="2" readonly>
+            </div>
+            <div class="input-group">
+                <label>Số lớn nhất (Max)</label>
+                <input type="number" value="4" readonly>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-action">
+        <button id="spinBtn" onclick="startSpin()">TẠO SỐ NGẪU NHIÊN</button>
+    </div>
+
+    <div class="history-section">
+        <span>Lịch sử gần đây:</span>
+        <span class="history-list" id="history">Chưa có lượt quay</span>
+    </div>
+</div>
+
+<script>
+    let recentResults = [];
+
+    function startSpin() {
+        const display = document.getElementById('display');
+        const btn = document.getElementById('spinBtn');
+        btn.disabled = true;
+
+        let count = 0;
+        const totalFrames = 14;
+
+        const interval = setInterval(() => {
+            const tempNum = Math.floor(Math.random() * 3) + 2;
+            display.textContent = tempNum;
+            count++;
+
+            if (count >= totalFrames) {
+                clearInterval(interval);
+                const finalResult = getWeightedRandom();
+                display.textContent = finalResult;
+                updateHistory(finalResult);
+                btn.disabled = false;
+            }
+        }, 55);
+    }
+
+    function getWeightedRandom() {
+        // Tỷ lệ 1/5 (20%) ra số 4
+        if (Math.random() < 1 / 5) {
+            return 4;
+        }
+        // 4/5 lượt còn lại ra ngẫu nhiên số 2 hoặc 3
+        return Math.floor(Math.random() * 2) + 2;
+    }
+
+    function updateHistory(num) {
+        recentResults.unshift(num);
+        if (recentResults.length > 6) {
+            recentResults.pop();
+        }
+        document.getElementById('history').textContent = recentResults.join('  •  ');
+    }
+</script>
+
+</body>
+</html>
